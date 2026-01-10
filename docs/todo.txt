@@ -1,0 +1,100 @@
+
+Write **4 short articles** (1–2 pages each, max):
+
+---
+
+### Article 1 — C# Fundamentals (for backend interviews)
+
+**Title example:**
+> C# Fundamentals in Practice: Abstractions, Immutability, and Boundaries
+
+**Must include:**
+- Interfaces vs abstract classes (with DevExplorer example)
+- `virtual` vs `sealed` (why both exist)
+- Why boundaries matter more than inheritance
+- One concrete mistake you avoided
+
+---
+
+### Article 2 — Async, Parallelism, and TPL (core backend topic)
+
+**Title example:**
+> Async and Parallelism in .NET: A Practical Mental Model
+
+**Must include:**
+- Difference between async concurrency and parallel execution
+- Why async helps ASP.NET scalability
+- Why unbounded parallelism is dangerous
+- How DevExplorer uses:
+  - async IO
+  - Channels
+  - bounded parallelism
+- One bug you encountered and fixed
+
+
+? https://www.reddit.com/r/dotnet/comments/qoycwn/struggling_a_bit_with_understanding_async/
+
+
+---
+
+### Article 3 — ASP.NET Core & JWT (system-level view)
+
+**Title example:**
+> How an ASP.NET Core Request Actually Flows (With JWT)
+
+**Must include:**
+- Middleware pipeline order
+- Where auth happens
+- Difference between authentication and authorization
+- Why JWT is stateless
+- How DevExplorer enforces roles
+- Common mistake (e.g. logging canceled requests as errors)
+
+---
+
+### Article 4 — Angular as a Client (not frontend theory)
+
+**Title example:**
+> Angular as an API Client: Handling Async State Correctly
+
+**Must include:**
+- Role of Angular in DevExplorer (thin client)
+- Handling loading / error / empty states
+- Why frontend must respect backend async nature
+- What *not* to over-engineer
+
+---
+
+### 10.2 Constraints for all articles
+
+- ❌ No framework marketing
+- ❌ No copied definitions
+- ❌ No “Hello World” tone
+- ✅ Use **your own project** as reference
+- ✅ Write as if explaining to a mid-level developer
+- ✅ Each article should be readable in **5–7 minutes**
+
+---
+
+## 11. Interview preparation usage
+
+Before interviews:
+- Re-read the articles
+- Practice explaining each topic **without code**
+- Then reference DevExplorer as proof
+
+Example interview answer:
+> “I actually explored this deeply while building DevExplorer. I can explain it conceptually, and I also have a concrete implementation.”
+
+That combination is what interviewers want.
+
+---
+
+## Final note
+
+DevExplorer is successful **only if**:
+- you can explain *why* each decision exists
+- you can explain it briefly
+- you can point to real code
+
+Code + explanation = real understanding.

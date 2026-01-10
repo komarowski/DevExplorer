@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="DevExplorer.Api/DevExplorer.Api.csproj" />
+  <Project Path="DevExplorer.Core/DevExplorer.Core.csproj" Id="d5a05f82-1bab-4e29-9fff-4c57a60cb2f1" />
+  <Project Path="DevExplorer.Tests/DevExplorer.Tests.csproj" Id="5d1d24af-3f73-496b-b091-3d249154067d" />
+</Solution>
