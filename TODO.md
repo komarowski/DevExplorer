@@ -14,85 +14,83 @@ This file is intentionally verbose.
 ### Project split (minimal but clean)
 
 ```bash
-├── DevExplorer.Core ← domain + infrastructure
+├── DevExplorer.Domain ← domain types + contracts + base classes
+├── DevExplorer.Infrastructure ← concrete implementations + adapters
+│   └── Private/ ← secrets not committed to GitHub
 ├── DevExplorer.Api ← ASP.NET Core API
 ├── DevExplorer.Angular ← Angular frontend
-├── DevExplorer.Tests ← unit tests
-└── (private) DevExplorer.Secrets
+└── DevExplorer.Tests ← unit tests
 ```
 
-**Why Core merges Domain + Infrastructure**
-- technical domain (logs, IO, parsing) is tightly coupled
-- fewer projects = faster iteration
-- separation is enforced via folders + interfaces
-- can be split later if complexity grows
+**Why Domain and Infrastructure are separate**
+- cleaner dependency flow: Domain has no dependencies on Infrastructure
+- Infrastructure depends on Domain (contracts live in Domain)
+- base classes and abstractions live in Domain (e.g., `TextParserBase`)
+- concrete implementations and secrets live in Infrastructure
+- separation is physical (different projects) + logical (folders)
+- easier to maintain and reason about dependencies
 
-## 2. DevExplorer.Core — internal structure
+## 2. DevExplorer.Domain — internal structure
 
-Logical (not physical) layering:
+Pure domain types and contracts (no implementations of external adapters).
 
 ```bash
-DevExplorer.Core                           # Core library: models + contracts + implementations (no ASP.NET)
-├── Domain                                 # Pure domain types and contracts (framework-agnostic)
-│   ├── Models                             # Data structures used across the system
-│   │   ├── LogRecord.cs                   # Raw log line + file metadata (path, line number, text)
-│   │   ├── LogEvent.cs                    # Parsed/structured event (timestamp, level, message, correlationId, blocks)
-│   │   ├── SearchHit.cs                   # Search result item (event + highlights + source info)
-│   │   └── IndexStatus.cs                 # Index job state/progress (files processed, lines read, elapsed, errors)
-│   │
-│   ├── ValueObjects                       # Strongly-typed small domain values
-│   │   └── CorrelationId.cs               # Typed correlation id with validation/normalization
-│   │
-│   └── Contracts                          # Interfaces (“ports”) used by core logic
-│       ├── ILogSource.cs                  # Reads logs as async stream of LogRecord (file/db/api sources)
-│       ├── ILogParser.cs                  # Converts LogRecord → LogEvent (parsing strategy)
-│       ├── ILogIndexStore.cs              # Stores and queries indexed events (in-memory/sqlite later)
-│       ├── IEnrichmentProvider.cs         # Enriches hits with extra info (DB/API lookups)
-│       ├── ILogPathPolicy.cs              # Resolves “environment/source” → real log folders/patterns
-│       ├── IDbQueryCatalog.cs             # Maps logical query names → real SQL/SP names + parameters
-│       └── IApiEndpointCatalog.cs         # Maps logical operations → real endpoints + auth requirements
+DevExplorer.Domain                         # Domain library: models + contracts + base classes (no external IO)
+├── Models                                 # Data structures used across the system
+│   ├── LogEvent.cs                        # Parsed/structured event (timestamp, level, message, correlationId, blocks)
+│   ├── SearchHit.cs                       # Search result item (event + highlights + source info)
+│   └── IndexStatus.cs                     # Index job state/progress (files processed, lines read, elapsed, errors)
 │
-├── Infrastructure                         # Implementations (adapters) for IO + pipeline mechanics
-│   ├── Parsing                            # Concrete parser implementations (strategies)
-│   │   ├── LogParserBase.cs               # Base parser with shared helpers + virtual hooks (OOP practice)
-│   │   ├── TextLogParser.cs               # Parser for plain text logs (most common starting point)
+├── Abstractions                           # Base classes and shared patterns for parsers/sources
+│   ├── TextParserBase.cs                  # Base parser with shared helpers + virtual hooks (OOP practice)
+│   └── LogSourceBase.cs                   # Base source with common async patterns (optional; add when needed)
+│
+├── Contracts                              # Interfaces ("ports") used by infrastructure
+│   ├── ILogParser.cs                      # Converts LogRecord → LogEvent (parsing strategy)
+│   ├── ILogIndexStore.cs                  # Stores and queries indexed events (in-memory/sqlite later)
+│   ├── IEnrichmentProvider.cs             # Enriches hits with extra info (DB/API lookups)
+│   ├── ILogPathPolicy.cs                  # Resolves “environment/source” → real log folders/patterns
+│   ├── IDbQueryCatalog.cs                 # Maps logical query names → real SQL/SP names + parameters
+│   └── IApiEndpointCatalog.cs             # Maps logical operations → real endpoints + auth requirements
+
+DevExplorer.Infrastructure                 # Implementations (adapters) for IO + pipeline mechanics
+│   ├── Parsers                            # Concrete parser implementations (strategies)
+│   │   ├── StandardTextLogParser.cs       # Parser for plain text logs (implements TextParserBase)
 │   │   └── JsonLogParser.cs               # Parser for JSON-per-line logs (add when needed)
-│   │
-│   ├── Sources                            # Log source implementations (where records come from)
-│   │   ├── FileLogSource.cs               # Reads files async from disk (IAsyncEnumerable)
-│   │   └── DbLogSource.cs                 # Reads audit/log records from DB (later)
 │   │
 │   ├── Indexing                           # Indexing orchestration and TPL pipeline
 │   │   ├── IndexingPipeline.cs            # Channel-based producer/consumer pipeline (bounded concurrency)
 │   │   ├── IndexJob.cs                    # Represents a single indexing run (config + token + lifecycle)
 │   │   └── IndexProgressTracker.cs        # Thread-safe counters + progress snapshots for UI/API
 │   │
-│   └── Storage                            # Storage implementations for indexed data
-│       ├── InMemoryIndexStore.cs          # Thread-safe store for MVP (fast dev, no persistence)
-│       └── SqliteIndexStore.cs            # Persistent store for big logs + fast search (later)
-│
-└── Common                                 # Small shared utilities (keep minimal)
-    ├── Guard.cs                           # Guard clauses (null/empty/range checks, throw helpers)
-    └── Result.cs                          # Lightweight result type (optional; avoid if unused)
+│   ├── Storage                            # Storage implementations for indexed data
+│   │   ├── InMemoryIndexStore.cs          # Thread-safe store for MVP (fast dev, no persistence)
+│   │   └── SqliteIndexStore.cs            # Persistent store for big logs + fast search (later)
+│   │
+│   └── Private                            # ⚠️ Secrets — NOT committed to GitHub
+│       ├── .gitignore                     # Ignore entire Private/ folder
+│       ├── LogPathPolicy.cs               # Real folder paths (secrets)
+│       ├── DbQueryCatalog.cs              # Real stored procedure names (secrets)
+│       ├── ApiEndpointCatalog.cs          # Internal API endpoints + auth (secrets)
+│       └── appsettings.secrets.json       # API keys, connection strings (secrets)
 ```
 
 **Dependency rules**
 
-- API depends on Core. Core never depends on API.
-- Domain must not reference Infrastructure (Interfaces live in Domain, implementations live in Infrastructure.).
-- Infrastructure may reference Domain (and Common).
-- Tests can reference Core (Domain + Infrastructure), but prefer targeting Domain first.
-- Sensitive implementations live outside the public repo.
+- API depends on Domain and Infrastructure. Domain and Infrastructure never depend on API.
+- Domain must not reference Infrastructure (Interfaces live in Domain, implementations live in Infrastructure).
+- Infrastructure depends on Domain (contracts + base classes).
+- Tests can reference Domain and Infrastructure, but prefer targeting Domain first.
+- Sensitive implementations live in Infrastructure/Private/ (never committed).
+
+**Rules for both projects**
+- Domain: no async, no cancellation tokens in interfaces (only in implementations)
+- Infrastructure: async everywhere, cancellation tokens everywhere
+- Both: thread-safe where applicable
+- TextParserBase lives in Domain/Abstractions (not in Infrastructure)
 
 
-**Rules**
-- no ASP.NET references here
-- async everywhere
-- cancellation tokens everywhere
-- thread-safe storage
-
-
-## 3. Design patterns used (intentionally minimal)
+## 4. Design patterns used (intentionally minimal)
 
 ### Patterns to use
 - Strategy → log parsers
@@ -111,7 +109,7 @@ DevExplorer.Core                           # Core library: models + contracts + 
 **Rule:** add a pattern only when a second concrete use case appears.
 
 
-## 4. Testing strategy
+## 5. Testing strategy
 
 ### Unit tests (`DevExplorer.Tests`)
 Focus:
@@ -130,7 +128,7 @@ Focus:
 - EF Core behavior (SQLite or Testcontainers)
 
 
-## 5. API layer (`DevExplorer.Api`)
+## 6. API layer (`DevExplorer.Api`)
 
 ### Responsibilities
 - host background jobs
@@ -152,7 +150,7 @@ Focus:
 - JWT authentication & authorization
 
 
-## 6. Frontend (`DevExplorer.Angular` — Angular)
+## 7. Frontend (`DevExplorer.Angular` — Angular)
 
 ### Scope (keep minimal)
 - start indexing job
@@ -164,24 +162,43 @@ Focus:
 No complex state management initially.
 
 
-## 7. Private project (`DevExplorer.Secrets`)
+## 8. Private folder (`DevExplorer.Infrastructure/Private`) — secrets
 
-Not committed to GitHub.
+**Not committed to GitHub.**
 
-Implements:
-- `ILogPathPolicy`
-- `IDbQueryCatalog`
-- `IApiEndpointCatalog`
+This folder is where sensitive configuration goes:
+- Real folder paths and environment-specific settings
+- Real database stored procedure names or SQL queries
+- Internal API endpoints and authentication credentials
+- API keys and connection strings
 
-Contains:
-- real folder paths
-- real stored procedure names
-- internal API endpoints and auth
+Create a `.gitignore` file in `DevExplorer.Infrastructure/Private/` to prevent accidental commits:
 
-Public repo ships demo implementations only.
+```
+# DevExplorer.Infrastructure/Private/.gitignore
+*
+!.gitignore
+```
+
+Implementations in this folder (implementing contracts from Domain):
+- `LogPathPolicy.cs` — maps logical paths to real file locations
+- `DbQueryCatalog.cs` — maps logical operation names to real SQL/SP names
+- `ApiEndpointCatalog.cs` — maps logical operations to real API endpoints + auth requirements
+- `appsettings.secrets.json` — connection strings, API keys, etc.
+
+**Load at runtime:**
+```csharp
+// In DevExplorer.Api/Program.cs
+var secretsConfig = new ConfigurationBuilder()
+    .AddJsonFile("Infrastructure/Private/appsettings.secrets.json", 
+        optional: true, reloadOnChange: true)
+    .Build();
+```
+
+Public repo ships only demo/stub implementations in Infrastructure/ root.
 
 
-## 8. Development plan (step by step)
+## 9. Development plan (step by step)
 
 ### Phase 1 — Core + Domain logic
 - [ ] Define models and interfaces
@@ -219,7 +236,7 @@ Public repo ships demo implementations only.
 - [ ] SQLite index storage (optional)
 
 
-## 9. Post-project mandatory step
+## 10. Post-project mandatory step
 
 After DevExplorer is complete:
 
@@ -231,7 +248,7 @@ Write short, concise articles:
 
 These articles are part of the learning goal and interview preparation.
 
-## 10. Guiding principles
+## 11. Guiding principles
 
 - clarity over cleverness
 - async correctness over micro-optimizations

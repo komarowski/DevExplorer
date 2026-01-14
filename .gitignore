@@ -70,3 +70,7 @@ pnpm-debug.log*
 **/.env
 **/.env.*
 !**/.env.example
+
+# Private folder
+
+DevExplorer.Infrastructure/Private/

@@ -33,7 +33,7 @@ Write **4 short articles** (1–2 pages each, max):
 
 
 ? https://www.reddit.com/r/dotnet/comments/qoycwn/struggling_a_bit_with_understanding_async/
-
+? https://www.reddit.com/r/csharp/comments/1knb1lq/whats_the_point_of_having_async_methods_if_all_we/
 
 ---
 
