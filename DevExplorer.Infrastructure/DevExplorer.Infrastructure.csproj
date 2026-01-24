@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Private\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DevExplorer.Domain\DevExplorer.Domain.csproj" />
   </ItemGroup>
 

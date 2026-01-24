@@ -5,7 +5,7 @@ namespace DevExplorer.Domain.Contracts;
 /// <summary>
 /// Parses log data from various sources into structured LogEvents.
 /// </summary>
-public interface ILogParser
+public interface IProjectLogParser
 {
     /// <summary>
     /// Parses a single line of text into a LogEvent.
@@ -23,13 +23,13 @@ public interface ILogParser
     IAsyncEnumerable<LogEvent> ReadLogFileAsync(string filePath, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Reads multiple log files and aggregates all parsed events into a ProjectLogEvents.
+    /// Reads multiple log files and aggregates all parsed events.
     /// </summary>
     /// <param name="projectName">The project/application name</param>
     /// <param name="filePaths">Enumerable of file paths to read and parse</param>
     /// <param name="cancellationToken">Token to cancel the operation</param>
-    /// <returns>A ProjectLogEvents containing all parsed events from all files</returns>
-    Task<ProjectLogEvents> ReadProjectLogsAsync(
+    /// <returns>A list of parsed events from all files</returns>
+    Task<List<LogEvent>> ReadProjectLogsAsync(
         string projectName,
         IEnumerable<string> filePaths,
         CancellationToken cancellationToken = default);

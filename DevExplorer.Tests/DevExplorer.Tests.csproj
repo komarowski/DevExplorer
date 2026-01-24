@@ -27,11 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UnitTests\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DevExplorer.Private\DevExplorer.Infrastructure.csproj" />
+    <ProjectReference Include="..\DevExplorer.Infrastructure\DevExplorer.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

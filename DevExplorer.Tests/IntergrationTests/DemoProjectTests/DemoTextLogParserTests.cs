@@ -1,22 +1,22 @@
 using DevExplorer.Domain.Contracts;
 using DevExplorer.Domain.Models;
-using DevExplorer.Infrastructure.Parsers;
+using DevExplorer.Infrastructure.Projects;
 
-namespace DevExplorer.Tests.IntergrationTests.LogParserTests;
+namespace DevExplorer.Tests.IntergrationTests.DemoProjectTests;
 
 /// <summary>
 /// Integration tests for TextLogParser: creates log files, reads them, and verifies parsing.
 /// </summary>
-public class StandardTextLogParserTests : IDisposable
+public class DemoTextLogParserTests : IDisposable
 {
     private readonly string _testLogDirectory;
-    private readonly ILogParser _parser;
+    private readonly IProjectLogParser _parser;
 
-    public StandardTextLogParserTests()
+    public DemoTextLogParserTests()
     {
         _testLogDirectory = Path.Combine(Path.GetTempPath(), $"DevExplorer_Tests_{Guid.NewGuid()}");
         Directory.CreateDirectory(_testLogDirectory);
-        _parser = new StandardTextLogParser();
+        _parser = new DemoTextLogParser();
     }
 
     public void Dispose()

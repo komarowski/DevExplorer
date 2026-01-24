@@ -18,7 +18,7 @@ namespace DevExplorer.Domain.Abstractions;
 /// Subclasses must override IsNewEntryLine() and ParseNewEntry() to customize
 /// parsing for different log formats (text, JSON, CSV, etc.).
 /// </summary>
-public abstract class TextParserBase : ILogParser
+public abstract class TextParserBase : IProjectLogParser
 {
     private LogEvent? _bufferedEvent;
 
@@ -92,22 +92,22 @@ public abstract class TextParserBase : ILogParser
     /// <summary>
     /// Reads multiple log files and aggregates all parsed events into a ProjectLogEvents.
     /// </summary>
-    public async Task<ProjectLogEvents> ReadProjectLogsAsync(
+    public async Task<List<LogEvent>> ReadProjectLogsAsync(
         string projectName,
         IEnumerable<string> filePaths,
         CancellationToken cancellationToken = default)
     {
-        var projectEvents = new ProjectLogEvents { ProjectName = projectName };
+        var allEvents = new List<LogEvent>();
 
         foreach (var filePath in filePaths)
         {
             await foreach (var logEvent in ReadLogFileAsync(filePath, cancellationToken))
             {
-                projectEvents.LogEvents.Add(logEvent);
+                allEvents.Add(logEvent);
             }
         }
 
-        return projectEvents;
+        return allEvents;
     }
 
     /// <summary>

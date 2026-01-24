@@ -1,0 +1,421 @@
+/* ============================================
+   Color Variables
+   ============================================ */
+:root {
+  /* Primary Colors */
+  --link: #247aa8;
+  --link-hover: #1b5b7e;
+  --link-background-hover: #e7ecf1;
+  
+  /* UI Colors */
+  --border: #303b44;
+  --border-light: #4e606e;
+  
+  /* Backgrounds */
+  --dark-gray: #303b44;
+  --gray: #4e606e;
+  --details: #f8fbff;
+  --white: #fff;
+
+  /* Text Colors */
+  --text-primary: #1b3c4a;
+  --text-secondary: #303b44;
+  --text-muted: #4e606e;
+  --text-white: #ffffff;
+  
+  /* States */
+  --color-error: #c91f1f;
+  --color-warning: #d97706;
+  --color-info: #247aa8;
+  --color-critical: #7f1d1d;
+}
+
+
+/* ============================================
+   Global Styles
+   ============================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  color: var(--text-primary);
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* ============================================
+   App Layout
+   ============================================ */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-header {
+  background-color: var(--dark-gray);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 1rem;
+}
+
+.app-header-content {
+  max-width: none;
+}
+
+.app-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-white);
+  margin: 0;
+}
+
+.app-layout {
+  display: flex;
+  flex: 1;
+  gap: 0;
+}
+
+.app-main {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* ============================================
+   Sidebar
+   ============================================ */
+.sidebar {
+  width: 250px;
+  background-color: var(--white);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar-content {
+  padding: 1rem 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sidebar-loading {
+  padding: 1rem;
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.project-list {
+  list-style: none;
+}
+
+.project-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  border-left: 3px solid transparent;
+}
+
+.project-item:hover {
+  background-color: var(--link-background-hover);
+  color: var(--text-secondary);
+}
+
+.project-item.active {
+  background-color: var(--link-background-hover);
+  color: var(--link);
+  border-left-color: var(--link);
+  font-weight: bold;
+}
+
+.project-item::before {
+    font-size: 25px;
+    margin-right: 5px;
+    content: 'aa';
+    color: transparent;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="%231b657e"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M8 16h8v2H8zm0-4h8v2H8zm6-10H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>') center no-repeat;
+}
+
+/* ============================================
+   Tabs
+   ============================================ */
+.tabs-header {
+  display: flex;
+}
+
+.tab-button {
+  flex: 0 1 auto;
+  padding: 0.5rem 0.2rem;
+  min-width: 70px;
+  background: var(--dark-gray);
+  color: var(--white);
+  font-size: 0.875rem;
+  border: none;
+}
+
+.tab-button:hover {
+  background-color: var(--gray);
+}
+
+.tab-button.active {
+  font-weight: bold;
+  color: var(--link-hover);
+  background: var(--details);
+  outline: 2px solid var(--link-hover);
+}
+
+.tabs-content {
+  padding: 1rem 0;
+}
+
+.tab-panel {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ============================================
+   Form Elements
+   ============================================ */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 0.25rem;
+  border: 1px solid var(--border-light);
+  border-radius: 0.375rem;
+  background-color: var(--white);
+  font-size: 0.7rem;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--link);
+  box-shadow: 0 0 0 3px rgba(36, 122, 168, 0.1);
+}
+
+/* ============================================
+   Filter Panel
+   ============================================ */
+.filter-panel {
+  margin-bottom: 0.5rem;
+}
+
+.filter-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.filter-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: var(--link);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background-color: var(--link-hover);
+}
+
+.btn-secondary {
+  background-color: var(--link-background-hover);
+  color: var(--link);
+}
+
+.btn-secondary:hover {
+  background-color: var(--link-background-hover);
+  opacity: 0.8;
+}
+
+/* ============================================
+   States
+   ============================================ */
+.loading-text,
+.error-text {
+  padding: 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.loading-text {
+  color: var(--text-muted);
+}
+
+.error-text {
+  color: var(--color-error);
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  background-color: var(--white);
+  border-radius: 0.5rem;
+  color: var(--text-muted);
+  font-size: 1.125rem;
+}
+
+.placeholder-content {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   Log Viewer
+   ============================================ */
+.log-count {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.log-container {
+  padding: 0.5rem 0;
+}
+
+.log-entry {
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+  background-color: var(--white);
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border-light);
+  margin-bottom: 0.5rem;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.log-level {
+  font-weight: bold;
+}
+
+.log-timestamp {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.log-correlation {
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.log-correlation span {
+  font-weight: bold;
+  color: var(--text-secondary);
+}
+
+.log-message {
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Log Level Styles */
+.log-level-error {
+  border-left: 4px solid var(--color-error);
+  background-color: rgba(201, 31, 31, 0.08);
+}
+
+.log-level-error .log-level {
+  color: var(--color-error);
+}
+
+.log-level-warning {
+  border-left: 4px solid var(--color-warning);
+  background-color: rgba(217, 119, 6, 0.08);
+}
+
+.log-level-warning .log-level {
+  color: var(--color-warning);
+}
+
+.log-level-info {
+  border-left: 4px solid var(--color-info);
+  background-color: var(--link-background-hover);
+}
+
+.log-level-info .log-level {
+  color: var(--link);
+}
+
+.log-level-debug {
+  border-left: 4px solid var(--border-light);
+}
+
+.log-level-debug .log-level {
+  color: var(--text-muted);
+}
+
+.log-level-critical {
+  border-left: 4px solid var(--color-critical);
+  background-color: rgba(127, 29, 29, 0.1);
+}
+
+.log-level-critical .log-level {
+  color: var(--color-critical);
+}

@@ -2,14 +2,14 @@ using System.Text.RegularExpressions;
 using DevExplorer.Domain.Abstractions;
 using DevExplorer.Domain.Models;
 
-namespace DevExplorer.Infrastructure.Parsers;
+namespace DevExplorer.Infrastructure.Projects;
 
 /// <summary>
 /// Test implementation of TextLogParser for integration tests.
 /// Parses standard text log format: "YYYY-MM-DD HH:mm:ss LEVEL message"
 /// Handles multi-line entries (stack traces, wrapped text) via buffering in TextParserBase.
 /// </summary>
-public partial class StandardTextLogParser : TextParserBase
+public partial class DemoTextLogParser : TextParserBase
 {
     private static readonly Regex LogEntryPattern = LogEntryPatternRegex();
 
