@@ -1,20 +1,18 @@
 
-Write **4 short articles** (1–2 pages each, max):
+# Prompt example
 
----
+Write **short, structured articles**. They are **compressed explanations** of what *you now actually understand*. Build the article in the form of a sequential presentation of questions and answers to them, from the general to the specific.
 
-### Article 1 — C# Fundamentals (for backend interviews)
+These articles are: **not tutorials**, **not blog spam**, **not copied from docs**
 
-**Title example:**
-> C# Fundamentals in Practice: Abstractions, Immutability, and Boundaries
+Why this step is critical:
+- Interviews test *verbal compression*, not raw coding ability
+- Writing forces you to structure mental models
+- These texts become: interview prep notes, LinkedIn / GitHub material, personal reference docs
 
-**Must include:**
-- Interfaces vs abstract classes (with DevExplorer example)
-- `virtual` vs `sealed` (why both exist)
-- Why boundaries matter more than inheritance
-- One concrete mistake you avoided
+Expected outcome:
+I can explain: *why* it is needed, *where* it helps, *where* it should be forbidden
 
----
 
 ### Article 2 — Async, Parallelism, and TPL (core backend topic)
 
@@ -31,11 +29,22 @@ Write **4 short articles** (1–2 pages each, max):
   - bounded parallelism
 - One bug you encountered and fixed
 
-
 ? https://www.reddit.com/r/dotnet/comments/qoycwn/struggling_a_bit_with_understanding_async/
+? https://www.reddit.com/r/csharp/comments/1knb1lq/whats_the_point_of_having_async_methods_if_all_we/
 
+#### Thread synchronization
 
----
+What to learn
+- Race conditions
+- Atomic operations
+- Concurrent collections
+- `lock` vs `Interlocked`
+
+How to practice in DevExplorer
+- Shared index store with concurrent writes
+- Progress counters using `Interlocked`
+- Intentional broken version → fixed version
+
 
 ### Article 3 — ASP.NET Core & JWT (system-level view)
 
@@ -44,15 +53,16 @@ Write **4 short articles** (1–2 pages each, max):
 
 **Must include:**
 - Middleware pipeline order
+- CancellationToken?
 - Where auth happens
 - Difference between authentication and authorization
 - Why JWT is stateless
 - How DevExplorer enforces roles
 - Common mistake (e.g. logging canceled requests as errors)
 
----
+### Article 4 — React as a Client (not frontend theory)
 
-### Article 4 — Angular as a Client (not frontend theory)
+### Article 5 — Angular as a Client (not frontend theory)
 
 **Title example:**
 > Angular as an API Client: Handling Async State Correctly
@@ -63,38 +73,17 @@ Write **4 short articles** (1–2 pages each, max):
 - Why frontend must respect backend async nature
 - What *not* to over-engineer
 
----
+### Article 6 — EF Core
 
-### 10.2 Constraints for all articles
+What to learn:
+- Tracking vs no-tracking
+- Projections
+- Raw SQL / stored procedures
+- Loading strategies
+- Cancellation support
 
-- ❌ No framework marketing
-- ❌ No copied definitions
-- ❌ No “Hello World” tone
-- ✅ Use **your own project** as reference
-- ✅ Write as if explaining to a mid-level developer
-- ✅ Each article should be readable in **5–7 minutes**
-
----
-
-## 11. Interview preparation usage
-
-Before interviews:
-- Re-read the articles
-- Practice explaining each topic **without code**
-- Then reference DevExplorer as proof
-
-Example interview answer:
-> “I actually explored this deeply while building DevExplorer. I can explain it conceptually, and I also have a concrete implementation.”
-
-That combination is what interviewers want.
-
----
-
-## Final note
-
-DevExplorer is successful **only if**:
-- you can explain *why* each decision exists
-- you can explain it briefly
-- you can point to real code
-
-Code + explanation = real understanding.
+How to practice in DevExplorer:
+- Read-only queries with `AsNoTracking`
+- DTO projections
+- SP access behind `IDbQueryCatalog`
+- Integration tests using SQLite
