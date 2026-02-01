@@ -3,7 +3,7 @@
 namespace DevExplorer.Domain.Contracts;
 
 /// <summary>
-/// Parses log data from various sources into structured LogEvents.
+/// Parses log data into structured LogEvents.
 /// </summary>
 public interface IProjectLogParser
 {

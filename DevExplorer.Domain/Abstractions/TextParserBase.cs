@@ -5,18 +5,7 @@ using System.Runtime.CompilerServices;
 namespace DevExplorer.Domain.Abstractions;
 
 /// <summary>
-/// Abstract base parser for text-based log files with multi-line entry support.
-/// 
-/// DESIGN NOTES:
-/// - Uses buffering to handle multi-line entries (e.g., stack traces, wrapped text)
-/// - Streaming approach: yields events as parsed, not loading entire file into memory
-/// - Supports both single-file and multi-file reading with async/await
-/// - Uses IAsyncEnumerable for memory efficiency and LINQ composability
-/// - CancellationToken support allows clients to cancel long-running operations
-/// 
-/// INHERITANCE:
-/// Subclasses must override IsNewEntryLine() and ParseNewEntry() to customize
-/// parsing for different log formats (text, JSON, CSV, etc.).
+/// Base parser for text log files with multi-line buffering.
 /// </summary>
 public abstract class TextParserBase : IProjectLogParser
 {

@@ -3,16 +3,17 @@ using DevExplorer.Domain.Models;
 namespace DevExplorer.Domain.Contracts;
 
 /// <summary>
-/// Minimal interface for a project plugin.
+/// Plugin contract for projects.
 /// </summary>
 public interface IProject
 {
-    /// <summary>Unique identifier for the project.</summary>
     string Name { get; }
+
+    bool HasLogs { get; }
 
     Task<List<LogEvent>> GetLogsAsync(LogFilter? filter, CancellationToken ct = default);
 
-    // TODO: GetAvailableMethodsAsync() to return list of ready scenarios of SPs or API endpoints?
+    IReadOnlyList<ProjectAction> GetProjectActions();
 
-    // TODO: CallMethodAsync(string methodName, ??? )
+    Task<ProjectActionResult> ExecuteProjectActionAsync(string actionName, CancellationToken ct = default);
 }

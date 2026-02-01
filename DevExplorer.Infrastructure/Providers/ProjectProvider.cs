@@ -4,8 +4,7 @@ using System.Reflection;
 namespace DevExplorer.Infrastructure.Providers;
 
 /// <summary>
-/// Static registry for discovering and caching IProject implementations.
-/// Thread-safe with lazy initialization.
+/// Static registry for discovering and caching projects.
 /// </summary>
 public static class ProjectProvider
 {

@@ -1,3 +1,4 @@
+using DevExplorer.Domain.Constants;
 using DevExplorer.Domain.Contracts;
 using DevExplorer.Domain.Models;
 using DevExplorer.Infrastructure.Projects;
@@ -90,19 +91,18 @@ public class DemoTextLogParserTests : IDisposable
         await File.WriteAllTextAsync(errorLogPath, errorLogContent);
 
         // Act
-        var projectEvents = await _parser.ReadProjectLogsAsync(
+        var logEvents = await _parser.ReadProjectLogsAsync(
             "TestProject",
             [appLogPath, errorLogPath]
         );
 
         // Assert
-        Assert.Equal("TestProject", projectEvents.ProjectName);
-        Assert.Equal(4, projectEvents.LogEvents.Count);
+        Assert.Equal(4, logEvents.Count);
 
         // Verify events from both files are included
-        var infoEvents = projectEvents.LogEvents.Where(e => e.Level == LogLevel.Info).ToList();
-        var errorEvents = projectEvents.LogEvents.Where(e => e.Level == LogLevel.Error).ToList();
-        var criticalEvents = projectEvents.LogEvents.Where(e => e.Level == LogLevel.Critical).ToList();
+        var infoEvents = logEvents.Where(e => e.Level == LogLevel.Info).ToList();
+        var errorEvents = logEvents.Where(e => e.Level == LogLevel.Error).ToList();
+        var criticalEvents = logEvents.Where(e => e.Level == LogLevel.Critical).ToList();
 
         Assert.Equal(2, infoEvents.Count);
         Assert.Single(errorEvents);

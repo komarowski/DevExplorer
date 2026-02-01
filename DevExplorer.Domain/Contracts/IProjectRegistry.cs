@@ -1,7 +1,7 @@
 namespace DevExplorer.Domain.Contracts;
 
 /// <summary>
-/// Registry contract for discovering projects.
+/// Registry interface for project discovery.
 /// </summary>
 public interface IProjectRegistry
 {
