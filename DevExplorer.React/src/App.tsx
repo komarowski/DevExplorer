@@ -3,7 +3,7 @@ import { Sidebar } from './components/Sidebar'
 import { ProjectTabs } from './components/ProjectTabs'
 import { LogFilter, LogViewer } from './components/logs'
 import { ActionViewer } from './components/actions'
-import { useProjectLogs, useProjects } from './hooks/useProjectData'
+import { useProjectLogs, useProjects, useEnvironment, useSetEnvironment } from './hooks/useProjectData'
 import { Project, LogLevel } from './types'
 
 function App() {
@@ -15,6 +15,13 @@ function App() {
 
   const { data: projects = [] } = useProjects()
   const { data: logs = [], isLoading, error } = useProjectLogs(selectedProject, filter)
+  const { data: environment } = useEnvironment()
+  const setEnvironmentMutation = useSetEnvironment()
+
+  const handleEnvironmentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setEnvironmentMutation.mutate(e.target.value)
+    setSelectedProject(null)
+  }
 
   const currentProject: Project | undefined = projects.find(p => p.name === selectedProject)
   const hasLogs = currentProject?.hasLogs ?? false
@@ -43,6 +50,21 @@ function App() {
       <header className="app-header">
         <div className="app-header-content">
           <h1 className="app-title">DevExplorer</h1>
+          <div className="environment-selector">
+            <select
+              id="environment-select"
+              value={environment?.current ?? ''}
+              onChange={handleEnvironmentChange}
+              disabled={setEnvironmentMutation.isLoading}
+              title='Select the environment to view projects and logs for'
+            >
+              {environment?.available.map((env) => (
+                <option key={env} value={env}>
+                  {env}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </header>
 

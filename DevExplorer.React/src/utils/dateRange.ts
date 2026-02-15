@@ -37,5 +37,5 @@ export const getDateRangeBoundaries = (range: DateRange): [string, string] => {
  * Format a timestamp string to a readable local date/time string
  */
 export const formatTimestamp = (timestamp: string): string => {
-  return new Date(timestamp).toLocaleString()
+  return new Date(timestamp).toLocaleString("en-GB")
 }

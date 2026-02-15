@@ -12,12 +12,82 @@ public abstract class ProjectBase : IProject
 {
     private IReadOnlyList<ProjectAction>? _cachedActions;
     private MethodInfo[]? _cachedMethods;
+    private string? _cachedName;
+    private static IDataAccessServiceFactory? _factory;
+    private static IProjectSettingsService? _settingsService;
 
     /// <summary>Unique identifier for the project.</summary>
-    public abstract string Name { get; }
+    public string Name
+    {
+        get
+        {
+            if (_cachedName != null)
+                return _cachedName;
 
-    /// <summary>Indicates whether the project provides logs.</summary>
-    public virtual bool HasLogs => false;
+            var attribute = GetType().GetCustomAttribute<ProjectAttribute>();
+            if (attribute == null)
+                throw new InvalidOperationException($"Project class '{GetType().Name}' must be decorated with [Project(name)] attribute.");
+
+            _cachedName = attribute.Name;
+            return _cachedName;
+        }
+    }
+
+    /// <summary>Display name for UI (falls back to Name).</summary>
+    public string DisplayName => Settings?.DisplayName ?? Name;
+
+    /// <summary>True if LogDirectory is configured for current environment.</summary>
+    public bool HasLogs => !string.IsNullOrEmpty(Settings?.LogDirectory);
+
+    /// <summary>True if ConnectionString is configured for current environment.</summary>
+    public bool HasDatabase => !string.IsNullOrEmpty(Settings?.ConnectionString);
+
+    /// <summary>True if DomainUrl is configured for current environment.</summary>
+    public bool HasDomainUrl => !string.IsNullOrEmpty(Settings?.DomainUrl);
+
+    /// <summary>Gets the current environment settings for this project.</summary>
+    protected ProjectSettings? Settings => GetSettingsService().GetProjectSettings(Name);
+
+    /// <summary>Gets the full log directory path.</summary>
+    protected string? LogDirectory => Settings?.LogDirectory;
+
+    /// <summary>Gets the domain URL for this project.</summary>
+    protected string? DomainUrl => Settings?.DomainUrl;
+
+    /// <summary>Gets or creates the data access service for this project.</summary>
+    protected IDataAccessService DataAccess
+    {
+        get
+        {
+            // Don't cache - connection string may change with environment
+            if (_factory == null)
+                throw new InvalidOperationException(
+                    "DataAccessServiceFactory not initialized. Call ProjectBase.SetDataAccessServiceFactory() in Program.cs");
+
+            var connectionString = Settings?.ConnectionString;
+            if (string.IsNullOrEmpty(connectionString))
+                throw new InvalidOperationException(
+                    $"Project '{Name}' does not have ConnectionString configured for current environment");
+
+            return _factory.CreateService(connectionString);
+        }
+    }
+
+    /// <summary>
+    /// Set the factory once during app startup.
+    /// </summary>
+    public static void SetDataAccessServiceFactory(IDataAccessServiceFactory factory)
+    {
+        _factory = factory;
+    }
+
+    /// <summary>
+    /// Set the project settings service once during app startup.
+    /// </summary>
+    public static void SetProjectSettingsService(IProjectSettingsService settingsService)
+    {
+        _settingsService = settingsService;
+    }
 
     /// <summary>Get logs from the project.</summary>
     public abstract Task<List<LogEvent>> GetLogsAsync(LogFilter? filter, CancellationToken ct = default);
@@ -87,5 +157,14 @@ public abstract class ProjectBase : IProject
             .GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.IgnoreCase);
 
         return _cachedMethods;
+    }
+
+    /// <summary>
+    /// Gets the settings service, throwing if not initialized.
+    /// </summary>
+    private static IProjectSettingsService GetSettingsService()
+    {
+        return _settingsService ?? throw new InvalidOperationException(
+            "ProjectSettingsService not initialized. Call ProjectBase.SetProjectSettingsService() in Program.cs");
     }
 }

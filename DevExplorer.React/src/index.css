@@ -54,11 +54,46 @@ button, input, select {
   padding: 0.5rem 1rem;
 }
 
+.app-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .app-title {
   font-size: 1.2rem;
   font-weight: bold;
   color: var(--text-white);
   margin: 0;
+}
+
+.environment-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.environment-selector label {
+  color: var(--text-white);
+  font-size: 0.875rem;
+}
+
+.environment-selector select {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--gray);
+  border-radius: 4px;
+  background-color: var(--white);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.environment-selector select:hover {
+  border-color: var(--primary);
+}
+
+.environment-selector select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .app-layout {
@@ -287,13 +322,10 @@ button, input, select {
 }
 
 .log-header {
+  font-weight: bold;
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.25rem;
-}
-
-.log-level {
-  font-weight: bold;
 }
 
 .log-timestamp {

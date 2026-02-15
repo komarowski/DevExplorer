@@ -9,7 +9,13 @@ public interface IProject
 {
     string Name { get; }
 
+    string DisplayName { get; }
+
     bool HasLogs { get; }
+
+    bool HasDatabase { get; }
+
+    bool HasDomainUrl { get; }
 
     Task<List<LogEvent>> GetLogsAsync(LogFilter? filter, CancellationToken ct = default);
 

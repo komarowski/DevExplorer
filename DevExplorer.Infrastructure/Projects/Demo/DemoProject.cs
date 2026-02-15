@@ -9,12 +9,9 @@ namespace DevExplorer.Infrastructure.Projects;
 /// <summary>
 /// Example project demonstrating the plugin pattern.
 /// </summary>
+[Project(name: "demo")]
 public class DemoProject : ProjectBase
 {
-    public override string Name => "demo";
-
-    public override bool HasLogs => true;
-
     public override Task<List<LogEvent>> GetLogsAsync(LogFilter? filter, CancellationToken ct = default)
     {
         var logEventList = new List<LogEvent>

@@ -11,40 +11,30 @@ Its goals are twofold:
 
 ```
 DevExplorer/
-├── DevExplorer.Domain/                    # Models + contracts
+├── DevExplorer.Domain/                    # Core abstractions and models
 │
-├── DevExplorer.Infrastructure/            # Implementations (adapters)
-│   ├── Providers/
-│   │   └── ProjectProvider.cs             # Static registry with reflection discovery
-│   ├── Projects/
-│   │   └── Demo/                          # Public example project
-│   └── PrivateProjects/                   # Git-ignored secrets
+├── DevExplorer.Infrastructure/            # Implementations
+│   ├── Data/                              # Data access
+│   ├── Providers/                         # ProjectProvider with reflection discovery
+│   ├── Projects/                          # Public project implementations
+│   ├── PrivateProjects/                   # Git-ignored project implementations
+│   └── Services/                          # ProjectSettingsService
 │
-├── DevExplorer.Api/                       # ASP.NET Core API
-├── DevExplorer.React/                     # React SPA frontend
-└── DevExplorer.Tests/                     # Unit + integration tests
+├── DevExplorer.Api/                       # ASP.NET Core minimal API
+├── DevExplorer.React/                     # React + TypeScript frontend
+└── DevExplorer.Tests/                     # xUnit tests
 ```
 
 ## Plugin Architecture Design
 
 **Why This Approach:**
-- Each project has fundamentally different log capabilities
-- Registry Pattern + simple discovery eliminates boilerplate factories
-- Git-friendly: PrivateProjects/ folder keeps secrets out of repository
-- Extensible: add IProject class → automatic discovery via reflection
+- Each project has different data sources (logs, databases, APIs)
+- Base classes (`ProjectBase`, `TextParserBase`) reduce boilerplate
+- Environment-aware settings via `IProjectSettingsService`
+- Git-friendly: PrivateProjects/ folder is ignored
 
 **How It Works:**
-1. Each project implements `IProject`
-2. `ProjectProvider.Initialize()` scans assemblies for IProject implementations
-3. Thread-safe cache stores discovered projects by name
-4. API calls ProjectProvider to dispatch to correct project
-
-## Development Progress
-
-| Phase | Status | Tasks |
-|-------|--------|-------|
-| Phase 1: Core + Domain Logic | ✅ COMPLETED | Models, contracts, ProjectProvider |
-| Phase 2: API + React Frontend | ✅ COMPLETED | API endpoints, React UI with sidebar/tabs, log filtering, color-coded display |
-| Phase 3: Indexing Pipeline | ⏳ PENDING | Async file reader, Channel-based pipeline, in-memory store, cancellation |
-| Phase 4: API & Background Jobs | ⏳ PENDING | Index endpoints, background jobs, middleware |
-| Phase 5: Advanced Features | ⏳ PENDING | More projects, enrichment, SQLite, JWT auth |
+1. Projects inherit from `ProjectBase` and use `[Project]` attribute
+2. `ProjectProvider` scans assemblies and caches discovered projects
+3. `IProjectSettingsService` provides environment-specific configuration
+4. Each project can have custom `IProjectLogParser` for log formats

@@ -96,7 +96,7 @@ public abstract class TextParserBase : IProjectLogParser
             }
         }
 
-        return allEvents;
+        return [.. allEvents.OrderByDescending(e => e.Timestamp)];
     }
 
     /// <summary>

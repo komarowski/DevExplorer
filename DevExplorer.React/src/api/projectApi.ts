@@ -15,6 +15,11 @@ export const apiClient = axios.create({
 
 export { convertLogLevel }
 
+export interface EnvironmentInfo {
+  current: string
+  available: string[]
+}
+
 export const projectApi = {
   getProjects: () =>
     USE_MOCK_DATA
@@ -31,5 +36,11 @@ export const projectApi = {
 
   executeProjectAction: (projectName: string, actionName: string) => {
     return apiClient.get(`/projects/${projectName}/actions/${actionName}`)
-  }
+  },
+
+  getEnvironment: () => 
+    apiClient.get<EnvironmentInfo>('/environment'),
+
+  setEnvironment: (environment: string) =>
+    apiClient.put<{ current: string }>('/environment', JSON.stringify(environment))
 }

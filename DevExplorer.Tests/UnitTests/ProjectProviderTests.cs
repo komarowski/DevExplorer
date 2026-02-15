@@ -7,8 +7,14 @@ namespace DevExplorer.Tests.UnitTests;
 /// <summary>
 /// Tests for ProjectProvider discovery and registration.
 /// </summary>
-public class ProjectProviderTests
+public class ProjectProviderTests : IClassFixture<TestProjectSettingsFixture>
 {
+    public ProjectProviderTests(TestProjectSettingsFixture fixture)
+    {
+        // Fixture ensures settings service is initialized
+        _ = fixture;
+    }
+
     #region Discovery Tests
 
     [Fact]
@@ -72,15 +78,17 @@ public class ProjectProviderTests
     }
 
     [Fact]
-    public void GetProject_ShouldBeCaseSensitive()
+    public void GetProject_ShouldBeCaseInsensitive()
     {
         var lowerCase = ProjectProvider.GetProject("demo");
         var upperCase = ProjectProvider.GetProject("DEMO");
         var mixedCase = ProjectProvider.GetProject("Demo");
 
         Assert.NotNull(lowerCase);
-        Assert.Null(upperCase);
-        Assert.Null(mixedCase);
+        Assert.NotNull(upperCase);
+        Assert.NotNull(mixedCase);
+        Assert.Equal(lowerCase?.Name, upperCase?.Name);
+        Assert.Equal(lowerCase?.Name, mixedCase?.Name);
     }
 
     #endregion
